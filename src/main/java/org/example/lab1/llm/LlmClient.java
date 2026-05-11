@@ -36,6 +36,7 @@ public class LlmClient {
      */
     @Retryable(
             include = { RestClientResponseException.class },
+            exclude = { AiServiceException.class },
             maxAttempts = 3,
             backoff = @Backoff(delay = 500, multiplier = 2.0)
     )
