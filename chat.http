@@ -1,0 +1,28 @@
+### Enkel fråga (ny session)
+POST http://localhost:8080/api/v1/chat
+Content-Type: application/json
+
+{
+  "personality": "coder",
+  "message": "Hur skriver jag en for-loop i Java?"
+}
+
+### Samma session (minne i konversationen)
+POST http://localhost:8080/api/v1/chat
+Content-Type: application/json
+
+{
+  "personality": "helper",
+  "message": "Hej!",
+  "sessionId": "user-123-abc"
+}
+
+### Uppföljningsfråga i samma session
+POST http://localhost:8080/api/v1/chat
+Content-Type: application/json
+
+{
+  "personality": "helper",
+  "message": "Vad sa jag nyss?",
+  "sessionId": "user-123-abc"
+}

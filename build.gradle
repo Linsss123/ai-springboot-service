@@ -25,6 +25,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // WireMock: använd standalone-artefakten för att undvika javax.servlet-konflikter på Spring Boot 3 (jakarta)
+    testImplementation 'com.github.tomakehurst:wiremock-jre8-standalone:2.35.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
