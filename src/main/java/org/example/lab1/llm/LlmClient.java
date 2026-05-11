@@ -31,11 +31,11 @@ public class LlmClient {
     }
 
     /**
-     * Anropar en OpenAI-kompatibel endpoint. Retry på 429/503 med exponentiell backoff.
+     * Anropar en OpenAI-kompatibel endpoint.
+     * Retry på 429/503 med exponentiell backoff (styrt i catch-blocket nedan så vi slipper SpEL).
      */
     @Retryable(
             include = { RestClientResponseException.class },
-            exceptionExpression = "#root.cause != null && (#root.cause instanceof T(org.springframework.web.client.RestClientResponseException)) ? ((org.springframework.web.client.RestClientResponseException)#root.cause).getStatusCode().value() == 429 || ((org.springframework.web.client.RestClientResponseException)#root.cause).getStatusCode().value() == 503 : false",
             maxAttempts = 3,
             backoff = @Backoff(delay = 500, multiplier = 2.0)
     )
@@ -71,9 +71,15 @@ public class LlmClient {
             return resp.choices.get(0).message.content;
         } catch (RestClientResponseException e) {
             int code = e.getStatusCode().value();
-            log.warn("LLM fel {}: {}", code, e.getResponseBodyAsString());
-            // kasta vidare för ev. retry/global handler
-            throw e;
+            String errBody = null;
+            try { errBody = e.getResponseBodyAsString(); } catch (Exception ignore) {}
+            log.warn("LLM fel {}: {}", code, errBody);
+            // Endast 429/503 ska trigga retry (@Retryable lyssnar på RestClientResponseException)
+            if (code == 429 || code == 503) {
+                throw e; // låt @Retryable hantera retry
+            }
+            // Övriga fel: wrappa i AiServiceException så att de INTE matchar @Retryable och alltså inte retrys
+            throw new AiServiceException("LLM fel " + code + (errBody != null ? (": " + errBody) : ""), e);
         } catch (Exception e) {
             throw new AiServiceException("Fel vid anrop till LLM", e);
         }
