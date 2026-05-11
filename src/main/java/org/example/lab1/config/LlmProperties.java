@@ -19,6 +19,16 @@ public class LlmProperties {
      */
     private String model = "openrouter/auto";
 
+    /**
+     * Timeout för TCP-anslutning till LLM (ms). Standard 2000 ms.
+     */
+    private int connectTimeoutMs = 2000;
+
+    /**
+     * Timeout för att läsa svar från LLM (ms). Standard 60000 ms.
+     */
+    private int readTimeoutMs = 60000;
+
     public String getBaseUrl() {
         return baseUrl;
     }
@@ -41,5 +51,21 @@ public class LlmProperties {
 
     public void setModel(String model) {
         this.model = model;
+    }
+
+    public int getConnectTimeoutMs() {
+        return connectTimeoutMs;
+    }
+
+    public void setConnectTimeoutMs(int connectTimeoutMs) {
+        this.connectTimeoutMs = connectTimeoutMs;
+    }
+
+    public int getReadTimeoutMs() {
+        return readTimeoutMs;
+    }
+
+    public void setReadTimeoutMs(int readTimeoutMs) {
+        this.readTimeoutMs = readTimeoutMs;
     }
 }

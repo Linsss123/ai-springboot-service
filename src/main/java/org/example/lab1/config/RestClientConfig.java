@@ -16,9 +16,9 @@ public class RestClientConfig {
     public RestClient llmRestClient(LlmProperties props, RestClient.Builder builder) {
         // Sätt rimliga timeouts så att Swagger/anrop inte "hänger" om LLM inte svarar
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(2000); // ms
+        requestFactory.setConnectTimeout(props.getConnectTimeoutMs()); // ms
         // Första svaret från lokala modeller kan ta tid ("cold start"), ge generös read-timeout
-        requestFactory.setReadTimeout(60000);   // ms
+        requestFactory.setReadTimeout(props.getReadTimeoutMs());   // ms
 
         // Använd Spring Boots auto-konfigurerade RestClient.Builder (injicerad)
         // så att korrekta HttpMessageConverters (Jackson) finns → JSON-body skickas rätt.
